@@ -4,8 +4,8 @@
 -- Access shared utilities from global namespace (set by shared/Utils.lua)
 local Utils = PerfectionsItems and PerfectionsItems.Utils
 
--- Import item distributions (defined in separate file for maintainability)
-local ItemDistributions = require("server/Distributions")
+-- Note: ItemDistributions loaded from server/Distributions.lua (loads alphabetically before Server.lua)
+-- Access it from global namespace after it's set
 
 Utils.debugPrint("Server module loading...")
 
@@ -43,6 +43,9 @@ end
 
 -- Add items to procedural distributions
 local function addItemsToDistributions()
+    -- Access our distributions from global namespace (set by server/Distributions.lua)
+    local ItemDistributions = PerfectionsItems.Distributions
+    
     -- Access the vanilla Distributions table directly from global namespace
     local proceduralDist = ProceduralDistributions
     

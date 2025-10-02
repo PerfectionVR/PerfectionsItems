@@ -98,4 +98,10 @@ function ItemDistributions.addItemsToLocationGroup(items, locations, groupName, 
     return addedCount, skippedCount
 end
 
+-- Export to global namespace for reliable access
+if not PerfectionsItems then
+    PerfectionsItems = {}
+end
+PerfectionsItems.Distributions = ItemDistributions
+
 return ItemDistributions

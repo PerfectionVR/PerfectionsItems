@@ -161,7 +161,24 @@ end
 
 ## External Resources
 
+**CRITICAL**: This mod targets **Build 41.78.16**. When browsing PZwiki, **ALWAYS use Build 41 archived links**:
+
+### How to Identify Build 41 vs Build 42 Pages:
+1. **Build 41 (CORRECT)**: Banner says "This page has been revised for the current stable version (41.78.16)"
+2. **Build 42 (WRONG)**: Banner says "This page has been updated to an unstable beta version (42.x)"
+
+### How to Get Build 41 Documentation from Build 42 Pages:
+- **Look at the TOP of the page** for yellow/orange banner
+- Banner will say: "For the Build 41 page, **please see this archived version**" (click the link)
+- Archived Build 41 URLs use format: `https://pzwiki.net/w/index.php?oldid=XXXXXX`
+- Example: Lua Events Build 41 archived link is `https://pzwiki.net/w/index.php?oldid=767129`
+
+**NEVER use Build 42 features/APIs** - they are incompatible with Build 41.
+
+Build 41 Documentation Links (use these directly):
 - [PZ Modding Wiki](https://pzwiki.net/wiki/Modding) - Official documentation
 - [Lua Events](https://pzwiki.net/wiki/Lua_event) - Complete event list
 - [Item Properties](https://pzwiki.net/wiki/Item_(scripts)) - Full item property reference
+- [Recipe Scripts](https://pzwiki.net/wiki/Recipe_(scripts)) - Recipe syntax reference
+- [Procedural Distributions](https://pzwiki.net/wiki/Procedural_distributions) - Loot spawn system
 - [Community Discord](https://discord.gg/theindiestone) - Workshop support channel
