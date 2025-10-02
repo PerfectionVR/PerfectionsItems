@@ -5,7 +5,7 @@ module PerfectionsItems
         Base,
     }
 
-    /* Wooden Sword - Same stats as Base.Bat */
+    /* Wooden Sword - Same stats as Base.BaseballBat */
     item WoodenSword
 	{
 	    DisplayCategory = Weapon,
@@ -52,7 +52,7 @@ module PerfectionsItems
 	}
 
 
-    /* Bokuto - 1.1x damage and 1.1x durability of Base.Bat */
+    /* Bokuto - 1.1x damage and 1.1x durability of Base.BaseballBat */
     item Bokuto
 	{
 	    DisplayCategory = Weapon,
