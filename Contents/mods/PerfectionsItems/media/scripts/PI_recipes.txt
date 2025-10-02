@@ -12,7 +12,6 @@ module PerfectionsItems
         Base.Twine=2,
         keep Base.Hammer,
         keep Base.Saw,
-        keep Base.File,
 
         Result:PerfectionsItems.WoodenSword,
         Time:80.0,
@@ -30,7 +29,6 @@ module PerfectionsItems
         Base.Twine=2,
         keep Base.Hammer,
         keep Base.Saw,
-        keep Base.File,
 
         Result:PerfectionsItems.Bokuto,
         Time:120.0,
