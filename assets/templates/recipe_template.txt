@@ -1,0 +1,45 @@
+-- Template for adding new recipes to Perfection's Items
+-- Copy this template and modify for new crafting recipes
+
+recipe Craft Template Weapon
+{
+    -- Basic recipe structure
+    keep [item1/item2/etc],    -- Tools that aren't consumed
+    [item1/item2/etc],         -- Materials that are consumed
+    
+    Result:TemplateWeapon,     -- What you get
+    Time:300.0,                -- Time in game minutes (300 = 5 real minutes)
+    Category:Weapon,           -- Category in crafting menu
+    
+    -- Skill requirements
+    SkillRequired:Carpentry=4,  -- Required skill and level
+    OnGiveXP:Recipe.OnGiveXP.None, -- XP handling (use None for auto-XP)
+    
+    -- Animation and sound (optional)
+    AnimNode:Disassemble,
+    Prop1:Hammer,
+    Prop2:Plank,
+    
+    -- Additional properties
+    NeedToBeLearn:true,        -- Requires recipe knowledge
+    CanBeDoneFromFloor:true,   -- Can craft with items on ground
+}
+
+-- XP Calculation Guide:
+-- Time 60-120 = 1-2 XP
+-- Time 150-250 = 3-5 XP  
+-- Time 300-400 = 5-8 XP
+-- Time 450-600 = 8-12 XP
+
+-- Common Categories:
+-- - Weapon
+-- - Cooking  
+-- - Farming
+-- - Electrical
+-- - Metalwork
+-- - Tailoring
+
+-- Common AnimNodes:
+-- - Disassemble
+-- - Build
+-- - Craft

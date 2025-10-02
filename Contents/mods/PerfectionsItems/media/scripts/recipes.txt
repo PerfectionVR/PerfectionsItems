@@ -1,0 +1,41 @@
+module PerfectionsItems
+{
+    imports
+    {
+        Base
+    }
+
+    /* Simple recipe for Wooden Sword */
+    recipe [PI] Make Wooden Sword
+    {
+        Plank=2,
+        Twine=2,
+        keep Hammer,
+        keep Saw,
+        keep File,
+
+        Result: PerfectionsItems.WoodenSword,
+        Time: 80.0,
+        SkillRequired: Carpentry=4,
+        Xp: Carpentry=5,
+        Category: Carpentry,
+    }
+
+    /* Stronger recipe for Bokuto - requires higher skill */
+    recipe [PI] Make Bokuto
+    {
+        Plank=3,
+        Nails=2,
+        SmallSheetMetal=1,
+        Twine=2,
+        keep Hammer,
+        keep Saw,
+        keep File,
+
+        Result: PerfectionsItems.Bokuto,
+        Time: 120.0,
+        SkillRequired: Carpentry=8,
+        Xp: Carpentry=15,
+        Category: Carpentry,
+    }
+}

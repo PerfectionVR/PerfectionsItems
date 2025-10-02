@@ -1,0 +1,22 @@
+version=1
+id=2984756299
+title=Perfection's Items
+description=Craftable wooden weapons for early game survival. Balanced gameplay with Carpentry skill requirements.
+
+[h1]Items[/h1]
+[list]
+[*] [b]Wooden Sword[/b] - Carpentry 4
+[*] [b]Bokuto[/b] - Carpentry 8 (stronger)
+[*] [b]Crafting Manual[/b] - Learn recipes (find in bookstores)
+[/list]
+
+[h1]Dependencies[/h1]
+[list]
+[*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2169435993]Mod Options[/url]
+[*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3487312010]Easy Distributions API[/url]
+[/list]
+
+Configure in Options > Mod Options. All items prefixed [b][PI][/b] for easy sorting.
+
+tags=Build 41;Weapons;Realistic
+visibility=public

@@ -1,0 +1,42 @@
+// Template for adding new items to Perfection's Items
+// Copy this template and modify for new weapons
+
+module Base
+{
+    item TemplateWeapon
+    {
+        DisplayName     = "Template Weapon",
+        Icon            = "Base.WoodenSword", // Change to custom icon
+        Type            = "Weapon",
+        Weight          = 1.0,
+        MinDamage       = 0.8,
+        MaxDamage       = 1.1,
+        DoorDamage      = 5,
+        TreeDamage      = 5,
+        CriticalChance  = 5,
+        CritDmgMultiplier = 2.0,
+        MinAngle        = 0.65,
+        MaxHitCount     = 2,
+        DamageCategory  = "Blunt", // or "Blade"
+        DamageMakeHole  = TRUE,
+        HitFloorSound   = "BatHit",
+        ImpactSound     = "BatHit",
+        DoorHitSound    = "BatHit",
+        HitSound        = "BatHit",
+        SwingSound      = "BatSwing",
+        Categories      = "Blunt", // or "Blade"
+        ConditionLowerChanceOneIn = 30,
+        ConditionMax    = 10,
+        MaxRange        = 1.5,
+        WeaponSprite    = "BaseballBat", // Change to custom sprite
+        PalletMultiplier = 0.3,
+        MinRange        = 0.61,
+        SwingAmountBeforeImpact = 0.02,
+        PushBackMod     = 0.3,
+        KnockBackOnNoDeath = FALSE,
+        SwingTime       = 3.0,
+        Tags            = "Blunt", // Add appropriate tags
+        AttachmentType  = "Shovel",
+        TooltipTexture  = "Item_WoodenSword", // Change to custom tooltip
+    }
+}
