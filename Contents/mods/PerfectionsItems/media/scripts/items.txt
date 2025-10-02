@@ -9,7 +9,8 @@ module PerfectionsItems
     item WoodenSword
     {
         Type = Weapon,
-        DisplayName = [PI] Wooden Sword,
+        DisplayName = Wooden Sword,
+        DisplayCategory = Weapon,
         Icon = Bat,
         WeaponSprite = Base.Bat,
         TwoHandWeapon = FALSE,
@@ -50,7 +51,8 @@ module PerfectionsItems
     item Bokuto
     {
         Type = Weapon,
-        DisplayName = [PI] Bokuto,
+        DisplayName = Bokuto,
+        DisplayCategory = Weapon,
         Icon = Bat,
         WeaponSprite = Base.Bat,
         TwoHandWeapon = FALSE,
@@ -91,10 +93,11 @@ module PerfectionsItems
     item BokutoMagazine
     {
         Type = Literature,
-        DisplayName = [PI] Wooden Sword Crafting Manual,
+        DisplayName = Wooden Sword Crafting Manual,
+        DisplayCategory = Literature,
         Icon = Magazine,
         Weight = 0.1,
-        TeachedRecipes = [PI] Make Wooden Sword;[PI] Make Bokuto,
+        TeachedRecipes = Make Wooden Sword;Make Bokuto,
         ReplaceOnUse = BokutoMagazine,
         StaticModel = Magazine,
         WorldStaticModel = MagazineGround,

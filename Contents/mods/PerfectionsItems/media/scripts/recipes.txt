@@ -6,7 +6,7 @@ module PerfectionsItems
     }
 
     /* Simple recipe for Wooden Sword */
-    recipe [PI] Make Wooden Sword
+    recipe Make Wooden Sword
     {
         Base.Plank=2,
         Base.Twine=2,
@@ -22,7 +22,7 @@ module PerfectionsItems
     }
 
     /* Stronger recipe for Bokuto - requires higher skill */
-    recipe [PI] Make Bokuto
+    recipe Make Bokuto
     {
         Base.Plank=3,
         Base.Nails=2,
