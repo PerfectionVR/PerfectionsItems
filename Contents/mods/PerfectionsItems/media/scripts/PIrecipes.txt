@@ -11,7 +11,7 @@ module PerfectionsItems
         Result:PerfectionsItems.WoodenSword,
         Time:80.0,
         SkillRequired:Woodwork=4,
-        Category:Perfection's Items,
+        Category:Perfections Items,
         NeedToBeLearn:true,
     }
 
@@ -28,7 +28,7 @@ module PerfectionsItems
         Result:PerfectionsItems.Bokuto,
         Time:120.0,
         SkillRequired:Woodwork=8,
-        Category:Perfection's Items,
+        Category:Perfections Items,
         NeedToBeLearn:true,
     }
 }
