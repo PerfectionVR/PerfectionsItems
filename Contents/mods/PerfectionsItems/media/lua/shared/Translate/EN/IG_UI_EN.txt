@@ -1,0 +1,24 @@
+-- Perfection's Items - English UI Translations
+-- Translation strings for Sandbox Options interface
+-- Reference: Build 41 Sandbox Options translation pattern
+
+IGUI_EN = {
+    -- Sandbox Page Name
+    Sandbox_PI = "Perfection's Items",
+    
+    -- Option Names
+    Sandbox_PI_WoodenSwordRarity = "Wooden Sword Set",
+    Sandbox_PI_BokutoRarity = "Bokuto Set",
+    Sandbox_PI_ManualRarity = "Crafting Manual",
+    
+    -- Option Tooltips
+    Sandbox_PI_WoodenSwordRarity_tooltip = "Controls availability of Wooden Sword item and recipe. Off = disabled, Extremely Rare = 0.1x spawn, Rare = 0.5x spawn, Common = 1.0x spawn.",
+    Sandbox_PI_BokutoRarity_tooltip = "Controls availability of Bokuto item and recipe (requires Woodwork 8). Off = disabled, Extremely Rare = 0.1x spawn, Rare = 0.5x spawn, Common = 1.0x spawn.",
+    Sandbox_PI_ManualRarity_tooltip = "Controls spawn rate of Wooden Sword Crafting Manual (required to learn recipes). Spawns at HALF the rate of items. Off = disabled, Extremely Rare = 0.05x spawn, Rare = 0.25x spawn, Common = 0.5x spawn.",
+    
+    -- Dropdown Values
+    Sandbox_PI_option_Off = "Off",
+    Sandbox_PI_option_ExtremelyRare = "Extremely Rare",
+    Sandbox_PI_option_Rare = "Rare",
+    Sandbox_PI_option_Common = "Common",
+}
