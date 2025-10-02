@@ -1,10 +1,5 @@
 module PerfectionsItems
 {
-    imports
-    {
-        Base
-    }
-
     /* Simple recipe for Wooden Sword */
     recipe Make Wooden Sword
     {
