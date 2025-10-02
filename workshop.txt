@@ -13,7 +13,6 @@ description=Craftable wooden weapons for early game survival. Balanced gameplay 
 [h1]Dependencies[/h1]
 [list]
 [*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2169435993]Mod Options[/url]
-[*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3487312010]Easy Distributions API[/url]
 [/list]
 
 Configure in Options > Mod Options. All items prefixed [b][PI][/b] for easy sorting.

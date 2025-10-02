@@ -8,7 +8,7 @@ A craftable wooden weapons mod demonstrating Build 41 modding patterns with comm
 
 ```
 Contents/mods/PerfectionsItems/
-├── mod.info                    # Dependencies: require=modoptions;EasyDistributionsAPI
+├── mod.info                    # Dependencies: require=modoptions
 ├── media/lua/{client,server,shared}/  # Client-side UI, server-side spawning, shared utils
 └── media/scripts/              # Item stats, recipes, spawn distributions
 ```
@@ -50,10 +50,43 @@ HitSound = WoodenSwordHit,       # References media/sound/WoodenSwordHit.ogg
 
 **Reference**: [Item Scripts](https://pzwiki.net/wiki/Item_(scripts)) | [Creating Custom Models](https://pzwiki.net/wiki/Creating_a_clothing_mod) | [Sound Scripts](https://pzwiki.net/wiki/Sound_(scripts))
 
-### Distribution API Integration
-`distributions.txt` defines spawn locations/rates, but `Easy Distributions API` allows **runtime removal** via `EasyDistAPI.removeFromAllDistributions(itemType)` in `server/Server.lua`. This enables user config without file modification.
+### Distribution Management (Build 41)
+Distributions are defined **entirely in Lua** using a rarity-based system for scalability. Items are separated into data (Distributions.lua) and logic (Server.lua), with early-out checks for disabled items:
 
-**Reference**: [Easy Distributions API](https://steamcommunity.com/sharedfiles/filedetails/?id=3487312010) | [Procedural Distributions](https://pzwiki.net/wiki/Procedural_distributions)
+```lua
+-- Rarity system in server/Distributions.lua
+ItemDistributions.Rarity = {
+    COMMON = 1.0,       -- 1%
+    UNCOMMON = 0.5,     -- 0.5%
+    RARE = 0.1,         -- 0.1%
+    VERY_RARE = 0.05,   -- 0.05%
+    EXOTIC = 0.01,      -- 0.01%
+    LEGENDARY = 0.001,  -- 0.001%
+}
+
+-- Data definitions
+ItemDistributions.weapons = {
+    {item = "PerfectionsItems.WoodenSword", chance = ItemDistributions.Rarity.VERY_RARE},
+}
+ItemDistributions.weaponLocations = {"ToolStoreMetalwork", "GarageCarpentry"}
+
+-- Logic in Server.lua
+local added, skipped = ItemDistributions.addItemsToLocationGroup(
+    ItemDistributions.weapons,
+    ItemDistributions.weaponLocations,
+    "Weapons",
+    isItemDisabled,
+    proceduralDist
+)
+```
+
+**Architecture benefits**:
+- Rarity tiers provide self-documenting, consistent spawn rates
+- Separation of data (Distributions.lua) from logic (Server.lua) aids maintainability
+- Early-out pattern prevents work for disabled items
+- Scales to 100+ items without container bloat (PZ Wiki recommended pattern)
+
+**Reference**: [Procedural Distributions](https://pzwiki.net/wiki/Procedural_distributions) | [Lua Events](https://pzwiki.net/wiki/Lua_event)
 
 ### ModOptions Integration
 **Key insight**: ModOptions is optional infrastructure. Check existence before use:
@@ -78,24 +111,27 @@ end
 
 - **Naming**: `[PI]` display prefix, `PerfectionsItems.ItemName` internal IDs
 - **Logging**: `Utils.debugPrint()` outputs `[PI] Message` for grep-friendly debugging
-- **Spawn rates**: 0.01-0.1% ("extremely rare") maintains balance while allowing discovery
-- **Event load order**: Utils → Options (client) → Server spawn control
+- **Rarity system**: Use `ItemDistributions.Rarity.*` constants (COMMON to LEGENDARY) for consistent spawn rates
+- **Code organization**: Data in `server/Distributions.lua`, logic in `server/Server.lua`, utilities in `shared/Utils.lua`
+- **Event load order**: Utils → Options (client) → Distributions (data) → Server (logic)
 
 ## Key Files
 
-- `mod.info`: Dependencies declared as `require=modoptions;EasyDistributionsAPI` (semicolon-separated)
+- `mod.info`: Dependencies declared as `require=modoptions` (semicolon-separated for multiple)
 - `items.txt`: Module-scoped item definitions (`module PerfectionsItems { item WoodenSword { ... } }`)
 - `recipes.txt`: Uses `keep` keyword for non-consumed tools, numeric time in game minutes
-- `distributions.txt`: ProceduralDistributions format with location keys like `ToolStoreMetalwork`, `BookstoreBooks`
+- `server/Distributions.lua`: All item spawn data, rarity constants, and `addItemsToLocationGroup()` helper
+- `server/Server.lua`: ModOptions integration, distribution orchestration, event registration
 
 **Reference**: [mod.info](https://pzwiki.net/wiki/Mod.info) | [Recipe Scripts](https://pzwiki.net/wiki/Recipe_(scripts))
 
 ## Common Pitfalls
 
-1. **Dependency assumptions**: Always test mod with ModOptions/EasyDistAPI disabled - fallback paths must work
-2. **Event timing**: `OnGameStart` fires client-side, `OnServerStarted` fires server-side - don't mix contexts
+1. **Dependency assumptions**: Always test mod with ModOptions disabled - fallback paths must work
+2. **Event timing**: `OnGameStart` fires client-side, `OnServerStarted` fires server-side, `OnDistributionMerge` fires when distributions load - don't mix contexts
 3. **Workshop uploads**: Upload only `Contents/` folder contents, not the folder itself
 4. **Script syntax**: Lua uses `require()`, but `.txt` scripts use PZ's custom parser - don't confuse them
+5. **Distribution manipulation**: Must happen in `OnDistributionMerge` event, not `OnServerStarted`
 
 ## External Resources
 

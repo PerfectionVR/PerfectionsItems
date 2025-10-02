@@ -1,8 +1,11 @@
 -- Perfection's Items - Server Side
--- Simplified server-side script using ModOptions
+-- Pure Lua distribution system (Build 41 compatible, scalable to 100+ items)
 
 -- Import shared utilities
 local Utils = require("shared/Utils")
+
+-- Import item distributions (defined in separate file for maintainability)
+local ItemDistributions = require("server/Distributions")
 
 Utils.debugPrint("Server module loading...")
 
@@ -19,31 +22,76 @@ local function getOptions()
     }
 end
 
--- Import Easy Distributions API utilities
-local EasyDistAPI = require("EasyDistributionsAPI")
-
--- Handle optional item spawning using Easy Distributions API
-local function setupSpawnControl()
+-- Check if item should be disabled based on options
+local function isItemDisabled(itemType)
     local options = getOptions()
     
-    -- Use Easy Distributions API to conditionally disable item spawns
-    local itemsToControl = {
-        {itemType = "PerfectionsItems.WoodenSword", enabled = options.EnableWoodenSword, name = "Wooden Sword"},
-        {itemType = "PerfectionsItems.Bokuto", enabled = options.EnableBokuto, name = "Bokuto"},
-        {itemType = "PerfectionsItems.BokutoMagazine", enabled = options.EnableCraftingManual, name = "Crafting Manual"}
+    -- Map item types to their enable flags
+    local itemFlags = {
+        ["PerfectionsItems.WoodenSword"] = options.EnableWoodenSword,
+        ["PerfectionsItems.Bokuto"] = options.EnableBokuto,
+        ["PerfectionsItems.BokutoMagazine"] = options.EnableCraftingManual,
     }
     
-    for _, itemConfig in ipairs(itemsToControl) do
-        if not itemConfig.enabled then
-            -- Use Easy Distributions API to disable item spawning
-            EasyDistAPI.removeFromAllDistributions(itemConfig.itemType)
-            Utils.debugPrint(itemConfig.name .. " spawns disabled via Easy Distributions API")
-        end
+    local enabled = itemFlags[itemType]
+    if enabled == nil then
+        return false -- Unknown items default to enabled
     end
+    
+    return not enabled -- Return true if disabled
 end
 
--- Setup spawn control when server starts
-Events.OnServerStarted.Add(setupSpawnControl)
+-- Add items to procedural distributions
+local function addItemsToDistributions()
+    local distributions = require("Distributions")
+    local proceduralDist = distributions.ProceduralDistributions
+    
+    if not proceduralDist or not proceduralDist.list then
+        Utils.debugPrint("Error: ProceduralDistributions not found")
+        return
+    end
+    
+    local totalAdded = 0
+    local totalSkipped = 0
+    
+    -- Add weapons to tool/carpentry locations
+    local added, skipped = ItemDistributions.addItemsToLocationGroup(
+        ItemDistributions.weapons,
+        ItemDistributions.weaponLocations,
+        "Weapons",
+        isItemDisabled,
+        proceduralDist
+    )
+    totalAdded = totalAdded + added
+    totalSkipped = totalSkipped + skipped
+    
+    -- Add martial arts weapons to sports locations
+    added, skipped = ItemDistributions.addItemsToLocationGroup(
+        ItemDistributions.martialArts,
+        ItemDistributions.martialArtsLocations,
+        "Martial Arts",
+        isItemDisabled,
+        proceduralDist
+    )
+    totalAdded = totalAdded + added
+    totalSkipped = totalSkipped + skipped
+    
+    -- Add literature to book/library locations
+    added, skipped = ItemDistributions.addItemsToLocationGroup(
+        ItemDistributions.literature,
+        ItemDistributions.literatureLocations,
+        "Literature",
+        isItemDisabled,
+        proceduralDist
+    )
+    totalAdded = totalAdded + added
+    totalSkipped = totalSkipped + skipped
+    
+    Utils.debugPrint("Added " .. totalAdded .. " item spawn(s), skipped " .. totalSkipped .. " disabled item(s)")
+end
+
+-- Setup distributions when they're loaded
+Events.OnDistributionMerge.Add(addItemsToDistributions)
 
 -- Initialize on server start
 Events.OnServerStarted.Add(function()
@@ -52,7 +100,6 @@ Events.OnServerStarted.Add(function()
     Utils.debugPrint("Wooden Sword Spawns: " .. tostring(options.EnableWoodenSword))
     Utils.debugPrint("Bokuto Spawns: " .. tostring(options.EnableBokuto))
     Utils.debugPrint("Crafting Manual Spawns: " .. tostring(options.EnableCraftingManual))
-    Utils.debugPrint("Using Easy Distributions API for spawn control")
 end)
 
 Utils.debugPrint("Server module loaded successfully")

@@ -15,10 +15,6 @@ A Project Zomboid mod that adds craftable wooden weapons for early game survival
   - [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2169435993)
   - Mod ID: `modoptions`
 
-- **Easy Distributions API** - For clean spawn management
-  - [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3487312010)
-  - Mod ID: `EasyDistributionsAPI`
-
 ## Items
 
 All items are prefixed with **[PI]** for easy identification and sorting:

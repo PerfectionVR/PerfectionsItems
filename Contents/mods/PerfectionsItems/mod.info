@@ -5,4 +5,4 @@ author=Perfection
 versionMin=41.0
 modversion=0.1.0
 icon=poster.png
-require=modoptions;EasyDistributionsAPI
+require=modoptions
