@@ -28,10 +28,14 @@ Contents/mods/PerfectionsItems/
 
 ### File Naming Conventions (CRITICAL)
 
-**Script file conflicts**: Generic filenames like `items.txt` or `recipes.txt` can conflict with vanilla or other mods. **Always prefix with your mod identifier:**
+**Script file conflicts**: Generic filenames like `items.txt` or `recipes.txt` **WILL OVERRIDE vanilla game files**, causing vanilla items to disappear. This happens because PZ loads script files by name, and your mod's `items.txt` replaces the vanilla `items.txt`.
 
-❌ **WRONG**: `items.txt`, `recipes.txt` (conflicts with Base module)  
-✅ **CORRECT**: `PI_items.txt`, `PI_recipes.txt` (unique namespace)
+**Real-world bug**: Using `items.txt` caused vanilla items like nails to disappear from the game because the file completely replaced vanilla item definitions.
+
+❌ **WRONG**: `items.txt`, `recipes.txt` (OVERRIDES vanilla Base module files - breaks vanilla items!)  
+✅ **CORRECT**: `PIitems.txt`, `PIrecipes.txt` (unique filename prevents conflicts)
+
+**Lesson learned**: Always prefix script filenames with your mod identifier to prevent overriding vanilla/other mods' script files.
 
 **Lua execution order**: Files load in this sequence:
 1. `shared/` folder (all files alphabetically)
@@ -88,6 +92,44 @@ end
 
 **Lua 5.1 limitations**: No `goto`, no `continue`, no bitwise operators (`&`, `|`), no `\z` escape. Use `if-else`, `break`, `return`, and traditional control flow.
 
+### Script Module Imports
+
+**Best practice**: Don't use `imports { Base }` - instead use explicit `Base.` prefixes for clarity and to avoid potential namespace issues.
+
+❌ **AVOID** (less explicit):
+```plaintext
+module PerfectionsItems
+{
+    imports
+    {
+        Base
+    }
+    
+    recipe Make Wooden Sword
+    {
+        Plank=2,              # Ambiguous - which module?
+        Hammer=1,             # Ambiguous - which module?
+        ...
+    }
+}
+```
+
+✅ **RECOMMENDED** (explicit and clear):
+```plaintext
+module PerfectionsItems
+{
+    recipe Make Wooden Sword
+    {
+        Base.Plank=2,         # Clear - from Base module
+        keep Base.Hammer,     # Clear - from Base module
+        Result:PerfectionsItems.WoodenSword,  # Clear - your module
+        ...
+    }
+}
+```
+
+**Why explicit prefixes are better**: Makes it immediately clear which module each item comes from, prevents ambiguity, and follows PZwiki's recommended best practices.
+
 ## Common Pitfalls
 
 1. **Lua 5.1 only**: No `goto`, `continue`, bitwise operators, or Lua 5.2+ features. Use traditional control flow (if-else, break, return)
@@ -97,8 +139,9 @@ end
 5. **Script syntax**: Lua uses `require()`, but `.txt` scripts use PZ's custom parser - don't confuse them
 6. **Distribution manipulation**: Must happen in `OnDistributionMerge` event, not `OnServerStarted`
 7. **Global namespace**: Use `PerfectionsItems.Utils` instead of `require()` for shared utilities - more reliable in PZ's Lua environment
-8. **Script file naming**: ALWAYS prefix with mod identifier (e.g., `PI_items.txt`, not `items.txt`) to avoid conflicts with vanilla/other mods
-9. **Lua file execution order**: Files load alphabetically per folder (shared → client → server). Prefix with numbers (e.g., `01_PI_Utils.lua`) to control load order
+8. **Script file naming (CRITICAL)**: Generic filenames like `items.txt` or `recipes.txt` will OVERRIDE vanilla game files and cause vanilla items to disappear. ALWAYS prefix with mod identifier (e.g., `PIitems.txt`, not `items.txt`)
+9. **Module imports**: Don't use `imports { Base }` - use explicit `Base.ItemName` prefixes for clarity and to follow PZwiki best practices
+10. **Lua file execution order**: Files load alphabetically per folder (shared → client → server). Prefix with numbers (e.g., `01_PI_Utils.lua`) to control load order
 
 ## External Resources
 
