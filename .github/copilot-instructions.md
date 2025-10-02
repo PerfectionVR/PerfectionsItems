@@ -130,18 +130,37 @@ module PerfectionsItems
 
 **Why explicit prefixes are better**: Makes it immediately clear which module each item comes from, prevents ambiguity, and follows PZwiki's recommended best practices.
 
+### Item Property Data Types (CRITICAL)
+
+**CRITICAL**: Item script properties have **strict type requirements**. Using wrong types causes `InvalidParameterException` errors.
+
+**Integer-only properties** (must be whole numbers, NO decimals):
+- `ConditionMax` - Item durability (e.g., `15`, NOT `16.5`)
+- `MaxHitCount` - Max zombies hit per swing (e.g., `2`, NOT `2.5`)
+
+**Real-world bug**: `ConditionMax = 16.5` caused error:
+```
+java.security.InvalidParameterException: Error: ConditionMax = 16.5 is not a valid parameter in item: Bokuto
+```
+
+**Solution**: Round to nearest integer: `ConditionMax = 17`
+
+**Reference**: [Item Properties (Build 41)](https://pzwiki.net/wiki/Item_(scripts)) - Check "All parameters" section for each property's data type requirements.
+
 ## Common Pitfalls
 
-1. **Lua 5.1 only**: No `goto`, `continue`, bitwise operators, or Lua 5.2+ features. Use traditional control flow (if-else, break, return)
-2. **Dependency assumptions**: Always test mod with ModOptions disabled - fallback paths must work
-3. **Event timing**: `OnGameStart` fires client-side, `OnServerStarted` fires server-side, `OnDistributionMerge` fires when distributions load - don't mix contexts
-4. **Workshop uploads**: Upload only `Contents/` folder contents, not the folder itself
-5. **Script syntax**: Lua uses `require()`, but `.txt` scripts use PZ's custom parser - don't confuse them
-6. **Distribution manipulation**: Must happen in `OnDistributionMerge` event, not `OnServerStarted`
-7. **Global namespace**: Use `PerfectionsItems.Utils` instead of `require()` for shared utilities - more reliable in PZ's Lua environment
-8. **Script file naming (CRITICAL)**: Generic filenames like `items.txt` or `recipes.txt` will OVERRIDE vanilla game files and cause vanilla items to disappear. ALWAYS prefix with mod identifier (e.g., `PIitems.txt`, not `items.txt`)
-9. **Module imports**: Don't use `imports { Base }` - use explicit `Base.ItemName` prefixes for clarity and to follow PZwiki best practices
-10. **Lua file execution order**: Files load alphabetically per folder (shared → client → server). Prefix with numbers (e.g., `01_PI_Utils.lua`) to control load order
+1. **Lua 5.1 only**: No `goto`, `continue`, bitwise operators, or Lua 5.2+ features. Use traditional control flow (if-else, break, return). **Reference**: [Lua (language) on PZwiki](https://pzwiki.net/wiki/Lua_(language)) - This page is Build 42, but Lua 5.1 syntax hasn't changed
+2. **Integer property types (CRITICAL)**: Properties like `ConditionMax`, `MaxHitCount` require whole numbers - decimals cause `InvalidParameterException`. **Reference**: [Item Properties (Build 41)](https://pzwiki.net/wiki/Item_(scripts)) - Check each property's data type
+3. **Dependency assumptions**: Always test mod with ModOptions disabled - fallback paths must work
+4. **Event timing**: `OnGameStart` fires client-side, `OnServerStarted` fires server-side, `OnDistributionMerge` fires when distributions load - don't mix contexts. **Reference**: [Lua Events (Build 41 archived)](https://pzwiki.net/wiki/Special:PermanentLink/767129)
+5. **Workshop uploads**: Upload only `Contents/` folder contents, not the folder itself. **Reference**: [Workshop.txt (Build 41)](https://pzwiki.net/wiki/Workshop.txt)
+6. **Script syntax**: Lua uses `require()`, but `.txt` scripts use PZ's custom parser - don't confuse them. **Reference**: [Item Scripts (Build 41)](https://pzwiki.net/wiki/Item_(scripts)) vs [Lua API (Build 41)](https://pzwiki.net/wiki/Lua_(API))
+7. **Distribution manipulation**: Must happen in `OnDistributionMerge` event, not `OnServerStarted`. **Reference**: [Procedural Distributions (Build 41 archived)](https://pzwiki.net/wiki/Special:PermanentLink/405935)
+8. **Global namespace**: Use `PerfectionsItems.Utils` instead of `require()` for shared utilities - more reliable in PZ's Lua environment
+9. **Script file naming (CRITICAL)**: Generic filenames like `items.txt` or `recipes.txt` will OVERRIDE vanilla game files and cause vanilla items to disappear. ALWAYS prefix with mod identifier (e.g., `PIitems.txt`, not `items.txt`). **Reference**: [Mod Structure (Build 41)](https://pzwiki.net/wiki/Mod_structure) - This page is Build 42, but Build 41 structure section exists
+10. **Module imports**: Don't use `imports { Base }` - use explicit `Base.ItemName` prefixes for clarity. **Reference**: [Item Scripts - Module syntax (Build 41)](https://pzwiki.net/wiki/Item_(scripts)#Module)
+11. **Lua file execution order**: Files load alphabetically per folder (shared → client → server). Prefix with numbers (e.g., `01_PI_Utils.lua`) to control load order. **Reference**: [Mod Structure (Build 41)](https://pzwiki.net/wiki/Mod_structure)
+12. **Debug log analysis (CRITICAL)**: Always check `Zomboid/Logs/` for `InvalidParameterException` errors - they pinpoint exact script issues with line-level precision. Logs include item name, property name, and invalid value
 
 ## External Resources
 
