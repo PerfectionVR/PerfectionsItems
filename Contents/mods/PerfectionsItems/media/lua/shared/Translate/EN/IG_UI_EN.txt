@@ -16,9 +16,9 @@ IGUI_EN = {
     Sandbox_PI_BokutoRarity_tooltip = "Controls availability of Bokuto item and recipe (requires Woodwork 8). Off = disabled, Extremely Rare = 0.1x spawn, Rare = 0.5x spawn, Common = 1.0x spawn.",
     Sandbox_PI_ManualRarity_tooltip = "Controls spawn rate of Wooden Sword Crafting Manual (required to learn recipes). Spawns at HALF the rate of items. Off = disabled, Extremely Rare = 0.05x spawn, Rare = 0.25x spawn, Common = 0.5x spawn.",
     
-    -- Dropdown Values
-    Sandbox_PI_option_Off = "Off",
-    Sandbox_PI_option_ExtremelyRare = "Extremely Rare",
-    Sandbox_PI_option_Rare = "Rare",
-    Sandbox_PI_option_Common = "Common",
+    -- Shared Dropdown Values (using valueTranslation pattern)
+    Sandbox_PI_RarityValues_option1 = "Off",
+    Sandbox_PI_RarityValues_option2 = "Extremely Rare",
+    Sandbox_PI_RarityValues_option3 = "Rare",
+    Sandbox_PI_RarityValues_option4 = "Common",
 }

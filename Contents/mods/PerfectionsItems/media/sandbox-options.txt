@@ -4,43 +4,28 @@ option PI.WoodenSwordRarity
 {
     type = enum,
     numValues = 4,
-    valueNames = {
-        Off,
-        ExtremelyRare,
-        Rare,
-        Common,
-    },
     default = 2,
     page = PI,
     translation = PI_WoodenSwordRarity,
+    valueTranslation = PI_RarityValues,
 }
 
 option PI.BokutoRarity
 {
     type = enum,
     numValues = 4,
-    valueNames = {
-        Off,
-        ExtremelyRare,
-        Rare,
-        Common,
-    },
     default = 2,
     page = PI,
     translation = PI_BokutoRarity,
+    valueTranslation = PI_RarityValues,
 }
 
 option PI.ManualRarity
 {
     type = enum,
     numValues = 4,
-    valueNames = {
-        Off,
-        ExtremelyRare,
-        Rare,
-        Common,
-    },
     default = 2,
     page = PI,
     translation = PI_ManualRarity,
+    valueTranslation = PI_RarityValues,
 }

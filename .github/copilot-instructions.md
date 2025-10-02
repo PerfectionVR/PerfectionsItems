@@ -59,7 +59,9 @@ Contents/mods/PerfectionsItems/
 
 **Framework**: Sandbox Options is Project Zomboid's built-in configuration system for server mechanics. Options appear in **New Game → Sandbox Options** before world creation.
 
-**Build 41 Documentation**: [Sandbox Options (PZwiki)](https://pzwiki.net/wiki/Sandbox_options)
+**Documentation**: 
+- [Sandbox Options Guide by Albion](https://github.com/demiurgeQuantified/PZModdingGuides/blob/main/guides/SandboxOptions.md) - Comprehensive Build 41-compatible guide
+- [Sandbox Options (PZwiki)](https://pzwiki.net/wiki/Sandbox_options) - Official wiki (Build 42, but syntax applies to Build 41)
 
 **Implementation Pattern**:
 
@@ -71,17 +73,22 @@ option PI.WoodenSwordRarity
 {
     type = enum,
     numValues = 4,
-    valueNames = {
-        Off,
-        ExtremelyRare,
-        Rare,
-        Common,
-    },
     default = 2,
     page = PI,
     translation = PI_WoodenSwordRarity,
+    valueTranslation = PI_RarityValues,
 }
 ```
+
+**Syntax Reference**: 
+- [Albion's Guide - Option Types](https://github.com/demiurgeQuantified/PZModdingGuides/blob/main/guides/SandboxOptions.md#option-types)
+- [PZwiki - Option Types](https://pzwiki.net/wiki/Sandbox_options#Option_types)
+
+**Key Properties**:
+- `type = enum` - Dropdown list type
+- `numValues = 4` - Number of options in the dropdown
+- `default = 2` - Which option is selected by default (1-indexed)
+- `valueTranslation = PI_RarityValues` - Translation key prefix for dropdown values
 
 **2. Read Options** (`shared/01_PI_Utils.lua`):
 ```lua
@@ -124,13 +131,22 @@ IGUI_EN = {
     -- Tooltips
     Sandbox_PI_WoodenSwordRarity_tooltip = "Controls item and recipe availability.",
     
-    -- Dropdown values
-    Sandbox_PI_option_Off = "Off",
-    Sandbox_PI_option_ExtremelyRare = "Extremely Rare",
-    Sandbox_PI_option_Rare = "Rare",
-    Sandbox_PI_option_Common = "Common",
+    -- Dropdown values (using valueTranslation pattern)
+    -- Pattern: Sandbox_<valueTranslation>_option<number>
+    Sandbox_PI_RarityValues_option1 = "Off",
+    Sandbox_PI_RarityValues_option2 = "Extremely Rare",
+    Sandbox_PI_RarityValues_option3 = "Rare",
+    Sandbox_PI_RarityValues_option4 = "Common",
 }
 ```
+
+**Translation Pattern Source**: [Albion's Guide - Enum Translation](https://github.com/demiurgeQuantified/PZModdingGuides/blob/main/guides/SandboxOptions.md#enum-values)
+> "To name the options in an enum option, you must add to your option script: `valueTranslation = MyMod_OptionName_Values,`"
+
+**Pattern Explanation**:
+- `valueTranslation = PI_RarityValues` in sandbox-options.txt
+- Translation keys: `Sandbox_PI_RarityValues_option1`, `Sandbox_PI_RarityValues_option2`, etc.
+- This allows **sharing** the same dropdown values across multiple options (all three use `PI_RarityValues`)
 
 **Key Points**:
 1. **Built-in framework**: No external dependencies, always available
@@ -244,7 +260,7 @@ java.security.InvalidParameterException: Error: ConditionMax = 16.5 is not a val
 
 1. **Lua 5.1 only**: No `goto`, `continue`, bitwise operators, or Lua 5.2+ features. Use traditional control flow (if-else, break, return). **Reference**: [Lua (language) on PZwiki](https://pzwiki.net/wiki/Lua_(language)) - This page is Build 42, but Lua 5.1 syntax hasn't changed
 2. **Integer property types (CRITICAL)**: Properties like `ConditionMax`, `MaxHitCount` require whole numbers - decimals cause `InvalidParameterException`. **Reference**: [Item Properties (Build 41)](https://pzwiki.net/wiki/Item_(scripts)) - Check each property's data type
-3. **Sandbox Options**: Always provide fallback defaults for when SandboxVars is not available (e.g., main menu). **Reference**: [Sandbox Options (Build 41)](https://pzwiki.net/wiki/Sandbox_options)
+3. **Sandbox Options**: Always provide fallback defaults for when SandboxVars is not available (e.g., main menu). Use `valueTranslation` property for enum dropdown values, NOT `valueNames` (which is not documented). **Reference**: [Sandbox Options Guide (Build 41)](https://github.com/demiurgeQuantified/PZModdingGuides/blob/main/guides/SandboxOptions.md)
 4. **Event timing**: `OnGameStart` fires client-side, `OnServerStarted` fires server-side, `OnDistributionMerge` fires when distributions load - don't mix contexts. **Reference**: [Lua Events (Build 41 archived)](https://pzwiki.net/wiki/Special:PermanentLink/767129)
 5. **Workshop uploads**: Upload only `Contents/` folder contents, not the folder itself. **Reference**: [Workshop.txt (Build 41)](https://pzwiki.net/wiki/Workshop.txt)
 6. **Script syntax**: Lua uses `require()`, but `.txt` scripts use PZ's custom parser - don't confuse them. **Reference**: [Item Scripts (Build 41)](https://pzwiki.net/wiki/Item_(scripts)) vs [Lua API (Build 41)](https://pzwiki.net/wiki/Lua_(API))
@@ -278,3 +294,7 @@ Build 41 Documentation Links (use these directly):
 - [Recipe Scripts](https://pzwiki.net/wiki/Recipe_(scripts)) - Recipe syntax reference
 - [Procedural Distributions](https://pzwiki.net/wiki/Procedural_distributions) - Loot spawn system
 - [Community Discord](https://discord.gg/theindiestone) - Workshop support channel
+
+Build 41 Community Guides (highly recommended):
+- [Albion's PZ Modding Guides](https://github.com/demiurgeQuantified/PZModdingGuides/tree/main/guides) - Comprehensive Build 41-compatible guides
+  - [Sandbox Options Guide](https://github.com/demiurgeQuantified/PZModdingGuides/blob/main/guides/SandboxOptions.md) - Complete sandbox options reference
