@@ -43,8 +43,8 @@ end
 
 -- Add items to procedural distributions
 local function addItemsToDistributions()
-    local distributions = require("Distributions")
-    local proceduralDist = distributions.ProceduralDistributions
+    -- Access the vanilla Distributions table directly from global namespace
+    local proceduralDist = ProceduralDistributions
     
     if not proceduralDist or not proceduralDist.list then
         Utils.debugPrint("Error: ProceduralDistributions not found")
