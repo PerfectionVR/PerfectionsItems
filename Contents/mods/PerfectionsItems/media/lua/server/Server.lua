@@ -1,8 +1,8 @@
 -- Perfection's Items - Server Side
 -- Pure Lua distribution system (Build 41 compatible, scalable to 100+ items)
 
--- Import shared utilities
-local Utils = require("shared/Utils")
+-- Access shared utilities from global namespace (set by shared/Utils.lua)
+local Utils = PerfectionsItems and PerfectionsItems.Utils
 
 -- Import item distributions (defined in separate file for maintainability)
 local ItemDistributions = require("server/Distributions")

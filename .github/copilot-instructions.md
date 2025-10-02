@@ -6,6 +6,8 @@ A craftable wooden weapons mod demonstrating Build 41 modding patterns with comm
 
 **Critical distinction**: `Contents/mods/PerfectionsItems/` is uploaded to Workshop; `assets/` contains dev-only files.
 
+**Lua Version**: Project Zomboid uses **Lua 5.1** (via Kahlua/LuaJ). Modern Lua 5.2+ features like `goto`/labels, `continue`, bitwise operators, and `\z` escape sequences are **not available**. Use traditional control flow patterns (if-else, break, return).
+
 ```
 Contents/mods/PerfectionsItems/
 ├── mod.info                    # Dependencies: require=modoptions
@@ -32,6 +34,28 @@ local function getOptions()
 end
 ```
 **Why this works**: In single-player/host contexts, client and server share Lua state. ModOptions is client-only (UI framework), so client must set the global. **Limitation**: Requires fallback for dedicated servers where client state may not be accessible. Standard PZ pattern would use server-side configuration, but ModOptions necessitates this approach.
+
+### Lua 5.1 Compatibility Patterns
+**Critical**: PZ uses Lua 5.1 (Kahlua). Avoid modern syntax:
+```lua
+-- ❌ WRONG (Lua 5.2+)
+for i = 1, 10 do
+    if shouldSkip then
+        goto continue  -- Not supported!
+    end
+    ::continue::
+end
+
+-- ✅ CORRECT (Lua 5.1)
+for i = 1, 10 do
+    if not shouldSkip then
+        -- Process item
+    else
+        -- Skip item
+    end
+end
+```
+**Lua 5.1 limitations**: No `goto`, no `continue`, no bitwise operators (`&`, `|`), no `\z` escape. Use `if-else`, `break`, `return`, and traditional control flow.
 
 ### Item Stat Derivation Strategy
 Copy vanilla item stats entirely, then modify specific values. Example: `WoodenSword` copies `Base.Bat` stats verbatim, `Bokuto` multiplies damage/durability by 1.1x. This ensures balanced gameplay and reduces testing burden.
@@ -127,11 +151,13 @@ end
 
 ## Common Pitfalls
 
-1. **Dependency assumptions**: Always test mod with ModOptions disabled - fallback paths must work
-2. **Event timing**: `OnGameStart` fires client-side, `OnServerStarted` fires server-side, `OnDistributionMerge` fires when distributions load - don't mix contexts
-3. **Workshop uploads**: Upload only `Contents/` folder contents, not the folder itself
-4. **Script syntax**: Lua uses `require()`, but `.txt` scripts use PZ's custom parser - don't confuse them
-5. **Distribution manipulation**: Must happen in `OnDistributionMerge` event, not `OnServerStarted`
+1. **Lua 5.1 only**: No `goto`, `continue`, bitwise operators, or Lua 5.2+ features. Use traditional control flow (if-else, break, return)
+2. **Dependency assumptions**: Always test mod with ModOptions disabled - fallback paths must work
+3. **Event timing**: `OnGameStart` fires client-side, `OnServerStarted` fires server-side, `OnDistributionMerge` fires when distributions load - don't mix contexts
+4. **Workshop uploads**: Upload only `Contents/` folder contents, not the folder itself
+5. **Script syntax**: Lua uses `require()`, but `.txt` scripts use PZ's custom parser - don't confuse them
+6. **Distribution manipulation**: Must happen in `OnDistributionMerge` event, not `OnServerStarted`
+7. **Global namespace**: Use `PerfectionsItems.Utils` instead of `require()` for shared utilities - more reliable in PZ's Lua environment
 
 ## External Resources
 

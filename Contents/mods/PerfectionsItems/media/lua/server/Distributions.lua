@@ -79,21 +79,20 @@ function ItemDistributions.addItemsToLocationGroup(items, locations, groupName, 
     
     for _, itemData in ipairs(items) do
         -- Early out if item is disabled via ModOptions
-        if isItemDisabledFunc(itemData.item) then
-            skippedCount = skippedCount + 1
-            goto continue
-        end
-        
-        for _, location in ipairs(locations) do
-            local distList = proceduralDist.list[location]
-            if distList and distList.items then
-                table.insert(distList.items, itemData.item)
-                table.insert(distList.items, itemData.chance)
-                addedCount = addedCount + 1
+        if not isItemDisabledFunc(itemData.item) then
+            -- Item is enabled, add to locations
+            for _, location in ipairs(locations) do
+                local distList = proceduralDist.list[location]
+                if distList and distList.items then
+                    table.insert(distList.items, itemData.item)
+                    table.insert(distList.items, itemData.chance)
+                    addedCount = addedCount + 1
+                end
             end
+        else
+            -- Item is disabled, skip it
+            skippedCount = skippedCount + 1
         end
-        
-        ::continue::
     end
     
     return addedCount, skippedCount

@@ -1,8 +1,8 @@
 -- Perfection's Items - Client Side
 -- Simplified client-side script
 
--- Import shared utilities
-local Utils = require("shared/Utils")
+-- Access shared utilities from global namespace (set by shared/Utils.lua)
+local Utils = PerfectionsItems.Utils
 
 Utils.debugPrint("Client module loading...")
 

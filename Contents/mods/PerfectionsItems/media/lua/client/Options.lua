@@ -1,8 +1,8 @@
 -- Perfection's Items - Mod Options Configuration
 -- Uses the Mod Options framework for a better user experience
 
--- Import shared utilities
-local Utils = require("shared/Utils")
+-- Access shared utilities from global namespace (set by shared/Utils.lua)
+local Utils = PerfectionsItems and PerfectionsItems.Utils
 
 -- Default options - individual control for each item type
 local OPTIONS = {
