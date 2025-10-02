@@ -4,18 +4,48 @@ A craftable wooden weapons mod demonstrating Build 41 modding patterns with comm
 
 ## Architecture Overview
 
-**Critical distinction**: `Contents/mods/PerfectionsItems/` is uploaded to Workshop; `assets/` contains dev-only files.
-
 **Lua Version**: Project Zomboid uses **Lua 5.1** (via Kahlua/LuaJ). Modern Lua 5.2+ features like `goto`/labels, `continue`, bitwise operators, and `\z` escape sequences are **not available**. Use traditional control flow patterns (if-else, break, return).
 
 ```
 Contents/mods/PerfectionsItems/
 ├── mod.info                    # Dependencies: require=modoptions
-├── media/lua/{client,server,shared}/  # Client-side UI, server-side spawning, shared utils
-└── media/scripts/              # Item stats, recipes, spawn distributions
+├── media/
+│   ├── lua/
+│   │   ├── shared/
+│   │   │   └── 01_PI_Utils.lua          # Loaded first (shared context)
+│   │   ├── client/
+│   │   │   ├── 01_PI_Client.lua         # Client initialization
+│   │   │   └── 02_PI_Options.lua        # ModOptions UI
+│   │   └── server/
+│   │       ├── 01_PI_Distributions.lua  # Spawn data
+│   │       └── 02_PI_Server.lua         # Spawn logic
+│   └── scripts/
+│       ├── PI_items.txt                 # Item definitions (PI_ prefix avoids conflicts)
+│       └── PI_recipes.txt               # Recipe definitions (PI_ prefix avoids conflicts)
 ```
 
 **Reference**: [PZ Modding Wiki](https://pzwiki.net/wiki/Modding) | [Mod Structure](https://pzwiki.net/wiki/Mod_structure)
+
+### File Naming Conventions (CRITICAL)
+
+**Script file conflicts**: Generic filenames like `items.txt` or `recipes.txt` can conflict with vanilla or other mods. **Always prefix with your mod identifier:**
+
+❌ **WRONG**: `items.txt`, `recipes.txt` (conflicts with Base module)  
+✅ **CORRECT**: `PI_items.txt`, `PI_recipes.txt` (unique namespace)
+
+**Lua execution order**: Files load in this sequence:
+1. `shared/` folder (all files alphabetically)
+2. `client/` folder (all files alphabetically) - client-side only
+3. `server/` folder (all files alphabetically) - server-side only
+
+**Best practice**: Prefix Lua files with numbers to control load order:
+- `01_PI_Utils.lua` - Shared utilities (loads first in shared/)
+- `01_PI_Client.lua` - Client initialization (loads first in client/)
+- `02_PI_Options.lua` - Depends on client context (loads second)
+- `01_PI_Distributions.lua` - Spawn data (loads first in server/)
+- `02_PI_Server.lua` - Spawn logic, depends on distributions (loads second)
+
+**Why this matters**: Prevents undefined reference errors and ensures dependencies load before dependents.
 
 ## Non-Obvious Patterns
 
@@ -55,99 +85,8 @@ for i = 1, 10 do
     end
 end
 ```
+
 **Lua 5.1 limitations**: No `goto`, no `continue`, no bitwise operators (`&`, `|`), no `\z` escape. Use `if-else`, `break`, `return`, and traditional control flow.
-
-### Item Stat Derivation Strategy
-Copy vanilla item stats entirely, then modify specific values. Example: `WoodenSword` copies `Base.Bat` stats verbatim, `Bokuto` multiplies damage/durability by 1.1x. This ensures balanced gameplay and reduces testing burden.
-
-**Asset Status (TODO)**: Currently reuses vanilla assets (`Icon = Bat`, `WeaponSprite = Bat`, `HitSound = BatHit`). Custom assets are planned:
-- `media/textures/Item_*.png` - Custom inventory icons (256x256 recommended)
-- `media/models/` - Custom 3D weapon models (.x or .fbx format)
-- `media/sound/*.ogg` - Custom hit/swing sounds (Vorbis OGG format)
-
-When adding custom assets, update item definitions:
-```plaintext
-Icon = WoodenSword,              # References media/textures/Item_WoodenSword.png
-WeaponSprite = WoodenSword,      # References media/models/WoodenSword.x
-HitSound = WoodenSwordHit,       # References media/sound/WoodenSwordHit.ogg
-```
-
-**Reference**: [Item Scripts](https://pzwiki.net/wiki/Item_(scripts)) | [Creating Custom Models](https://pzwiki.net/wiki/Creating_a_clothing_mod) | [Sound Scripts](https://pzwiki.net/wiki/Sound_(scripts))
-
-### Distribution Management (Build 41)
-Distributions are defined **entirely in Lua** using a rarity-based system for scalability. Items are separated into data (Distributions.lua) and logic (Server.lua), with early-out checks for disabled items:
-
-```lua
--- Rarity system in server/Distributions.lua
-ItemDistributions.Rarity = {
-    COMMON = 1.0,       -- 1%
-    UNCOMMON = 0.5,     -- 0.5%
-    RARE = 0.1,         -- 0.1%
-    VERY_RARE = 0.05,   -- 0.05%
-    EXOTIC = 0.01,      -- 0.01%
-    LEGENDARY = 0.001,  -- 0.001%
-}
-
--- Data definitions
-ItemDistributions.weapons = {
-    {item = "PerfectionsItems.WoodenSword", chance = ItemDistributions.Rarity.VERY_RARE},
-}
-ItemDistributions.weaponLocations = {"ToolStoreMetalwork", "GarageCarpentry"}
-
--- Logic in Server.lua
-local added, skipped = ItemDistributions.addItemsToLocationGroup(
-    ItemDistributions.weapons,
-    ItemDistributions.weaponLocations,
-    "Weapons",
-    isItemDisabled,
-    proceduralDist
-)
-```
-
-**Architecture benefits**:
-- Rarity tiers provide self-documenting, consistent spawn rates
-- Separation of data (Distributions.lua) from logic (Server.lua) aids maintainability
-- Early-out pattern prevents work for disabled items
-- Scales to 100+ items without container bloat (PZ Wiki recommended pattern)
-
-**Reference**: [Procedural Distributions](https://pzwiki.net/wiki/Procedural_distributions) | [Lua Events](https://pzwiki.net/wiki/Lua_event)
-
-### ModOptions Integration
-**Key insight**: ModOptions is optional infrastructure. Check existence before use:
-```lua
-if ModOptions and ModOptions.getInstance then
-    local settings = ModOptions:getInstance(OPTIONS, "PerfectionsItems", "Perfection's Items")
-    -- Configure settings
-else
-    -- Mod still works with defaults
-end
-```
-
-**Reference**: [ModOptions Framework](https://steamcommunity.com/sharedfiles/filedetails/?id=2169435993)
-
-## Development Workflow
-
-**Testing cycle**: Edit `Contents/mods/` → Test in-game with both dependencies → Update `CHANGELOG.md` and `mod.info` version.
-
-**Critical**: Never edit `assets/` files assuming they affect gameplay - they're dev documentation only.
-
-## Project Conventions
-
-- **Naming**: `[PI]` display prefix, `PerfectionsItems.ItemName` internal IDs
-- **Logging**: `Utils.debugPrint()` outputs `[PI] Message` for grep-friendly debugging
-- **Rarity system**: Use `ItemDistributions.Rarity.*` constants (COMMON to LEGENDARY) for consistent spawn rates
-- **Code organization**: Data in `server/Distributions.lua`, logic in `server/Server.lua`, utilities in `shared/Utils.lua`
-- **Event load order**: Utils → Options (client) → Distributions (data) → Server (logic)
-
-## Key Files
-
-- `mod.info`: Dependencies declared as `require=modoptions` (semicolon-separated for multiple)
-- `items.txt`: Module-scoped item definitions (`module PerfectionsItems { item WoodenSword { ... } }`)
-- `recipes.txt`: Uses `keep` keyword for non-consumed tools, numeric time in game minutes
-- `server/Distributions.lua`: All item spawn data, rarity constants, and `addItemsToLocationGroup()` helper
-- `server/Server.lua`: ModOptions integration, distribution orchestration, event registration
-
-**Reference**: [mod.info](https://pzwiki.net/wiki/Mod.info) | [Recipe Scripts](https://pzwiki.net/wiki/Recipe_(scripts))
 
 ## Common Pitfalls
 
@@ -158,6 +97,8 @@ end
 5. **Script syntax**: Lua uses `require()`, but `.txt` scripts use PZ's custom parser - don't confuse them
 6. **Distribution manipulation**: Must happen in `OnDistributionMerge` event, not `OnServerStarted`
 7. **Global namespace**: Use `PerfectionsItems.Utils` instead of `require()` for shared utilities - more reliable in PZ's Lua environment
+8. **Script file naming**: ALWAYS prefix with mod identifier (e.g., `PI_items.txt`, not `items.txt`) to avoid conflicts with vanilla/other mods
+9. **Lua file execution order**: Files load alphabetically per folder (shared → client → server). Prefix with numbers (e.g., `01_PI_Utils.lua`) to control load order
 
 ## External Resources
 
