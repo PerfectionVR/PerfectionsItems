@@ -1,8 +1,12 @@
 -- Perfection's Items - English Sandbox Translations
 -- Translation strings for Sandbox Options interface
 -- Reference: Albion's Sandbox Options Guide (Build 41)
+--
+-- NOTE: Filename MUST be Sandbox_EN.txt and table MUST be Sandbox_EN
+-- This is required by the Build 41 sandbox options system
+-- The "overrides" warning in logs is NORMAL and unavoidable
 
-Sandbox_PI_EN = {
+Sandbox_EN = {
     -- Sandbox Page Name
     Sandbox_PI = "Perfection's Items",
     
