@@ -40,5 +40,10 @@ Configure spawn rates in [b]New Game → Sandbox Options → Perfection's Items[
 
 Settings apply when containers are first opened. Separate controls for each item type (Wooden Sword, Bokuto, Manual).
 
+[h1]Links[/h1]
+[list]
+[*] [url=https://github.com/PerfectionVR/PerfectionsItems]GitHub Repository[/url] - Source code, bug reports, feature requests
+[/list]
+
 tags=Build 41;Weapons;Realistic
 visibility=public

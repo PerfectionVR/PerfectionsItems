@@ -2,6 +2,7 @@ name=Perfection's Items
 id=PerfectionsItems
 description=Introduces craftable wooden swords, bokuto, and a crafting manual to help you survive the apocalypse.
 author=Perfection
+url=https://github.com/PerfectionVR/PerfectionsItems
 versionMin=41.0
 modversion=0.1.0
 icon=poster.png
