@@ -1,13 +1,6 @@
 # Changelog
 
-## [1.1.0] - 2025-10-03
-
-### Added
-
-- Procedural loot distribution (40 containers)
-- Sandbox Options for spawn rates
-
-## [1.0.0] - 2025-10-03
+## [0.1.0] - 2025-10-03
 
 ### Added
 
@@ -15,3 +8,5 @@
 - Bokuto
 - Crafting Manual
 - Using vanilla baseball bat assets
+- Procedural loot distribution (40 containers)
+- Sandbox Options for spawn rates

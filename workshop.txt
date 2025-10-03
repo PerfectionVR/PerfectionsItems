@@ -1,5 +1,4 @@
 version=1
-id=2984756299
 title=Perfection's Items
 description=Craftable wooden weapons for early game survival. A novelty mod that adds craftable alternatives to baseball bats with custom recipes and spawn control.
 
