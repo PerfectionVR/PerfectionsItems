@@ -35,26 +35,27 @@ local function logSandboxSettings()
         return
     end
     
-    -- Read server/admin-controlled sandbox settings
-    local woodenEnabled = PI.Utils.isItemEnabled("WoodenSword")
-    local bokutoEnabled = PI.Utils.isItemEnabled("Bokuto")
-    local manualEnabled = PI.Utils.isItemEnabled("Manual")
-    
-    PI.Utils.debugPrint("Sandbox Options (admin-controlled):")
-    PI.Utils.debugPrint("  WoodenSword loot/recipes: " .. (woodenEnabled and "ENABLED" or "DISABLED"))
-    PI.Utils.debugPrint("  Bokuto loot/recipes: " .. (bokutoEnabled and "ENABLED" or "DISABLED"))
-    PI.Utils.debugPrint("  Manual loot spawns: " .. (manualEnabled and "ENABLED" or "DISABLED"))
-    
-    -- Log spawn multipliers for debugging
+    -- Log spawn multipliers and rough probability estimates for debugging
     local woodenMultiplier = PI.Utils.getSpawnMultiplier("WoodenSword")
     local bokutoMultiplier = PI.Utils.getSpawnMultiplier("Bokuto")
     local manualMultiplier = PI.Utils.getSpawnMultiplier("Manual")
     
-    PI.Utils.debugPrint("Loot spawn multipliers:")
-    PI.Utils.debugPrint("  WoodenSword: " .. tostring(woodenMultiplier) .. "x")
-    PI.Utils.debugPrint("  Bokuto: " .. tostring(bokutoMultiplier) .. "x")
-    PI.Utils.debugPrint("  Manual: " .. tostring(manualMultiplier) .. "x")
-    PI.Utils.debugPrint("  (multiplier 0.0 = no loot spawns)")
+    PI.Utils.debugPrint("Loot spawn estimates (best-case containers):")
+    
+    -- WoodenSword estimates (best container: CrateCarpentry at 1.0 base)
+    local woodenBest = woodenMultiplier > 0 and math.floor(1 / (1.0 * woodenMultiplier) * 100) or 0
+    PI.Utils.debugPrint("  WoodenSword: " .. tostring(woodenMultiplier) .. "x" .. 
+        (woodenMultiplier > 0 and " (~1 in " .. woodenBest .. " carpentry crates)" or " (never spawns)"))
+    
+    -- Bokuto estimates (best container: CrateCarpentry at 0.7 base)
+    local bokutoBest = bokutoMultiplier > 0 and math.floor(1 / (0.7 * bokutoMultiplier) * 100) or 0
+    PI.Utils.debugPrint("  Bokuto: " .. tostring(bokutoMultiplier) .. "x" ..
+        (bokutoMultiplier > 0 and " (~1 in " .. bokutoBest .. " carpentry crates)" or " (never spawns)"))
+    
+    -- Manual estimates (best container: CrateMagazines at 1.0 base, but half multiplier)
+    local manualBest = manualMultiplier > 0 and math.floor(1 / (1.0 * manualMultiplier) * 100) or 0
+    PI.Utils.debugPrint("  Manual: " .. tostring(manualMultiplier) .. "x" ..
+        (manualMultiplier > 0 and " (~1 in " .. manualBest .. " magazine crates)" or " (never spawns)"))
 end
 
 -- ============================================================================
