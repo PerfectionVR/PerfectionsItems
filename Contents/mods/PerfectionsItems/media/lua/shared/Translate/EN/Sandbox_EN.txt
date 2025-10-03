@@ -20,10 +20,10 @@ Sandbox_EN = {
     Sandbox_PI_BokutoRarity_tooltip = "Controls spawn rate for Bokuto items and recipes (requires Woodwork 8). Applied when containers are first opened/loaded. Changing settings mid-game only affects unopened containers.",
     Sandbox_PI_ManualRarity_tooltip = "Controls spawn rate for the Bokuto crafting manual (spawns at half the rate of items). Applied when containers are first opened/loaded. Changing settings mid-game only affects unopened containers.",
     
-    -- Shared Dropdown Values showing spawn percentages (using valueTranslation pattern)
-    -- Percentages shown are relative to base spawn chances defined in distributions
-    Sandbox_PI_RarityValues_option1 = "Disabled (0%)",
-    Sandbox_PI_RarityValues_option2 = "Very Rare (10%)",
-    Sandbox_PI_RarityValues_option3 = "Rare (50%)",
-    Sandbox_PI_RarityValues_option4 = "Common (100%)",
+    -- Shared Dropdown Values (using valueTranslation pattern)
+    -- Labels describe relative spawn frequency, not exact percentages
+    Sandbox_PI_RarityValues_option1 = "Disabled",
+    Sandbox_PI_RarityValues_option2 = "Very Rare",
+    Sandbox_PI_RarityValues_option3 = "Rare",
+    Sandbox_PI_RarityValues_option4 = "Common",
 }
