@@ -14,7 +14,7 @@ Contents/mods/PerfectionsItems/
 │   ├── lua/
 │   │   ├── shared/
 │   │   │   ├── 01_PI_Utils.lua          # Loaded first (shared context)
-│   │   │   └── Translate/EN/IG_UI_EN.txt # Sandbox option translations
+│   │   │   └── Translate/EN/Sandbox_EN.txt # Sandbox option translations
 │   │   ├── client/
 │   │   │   ├── 01_PI_Client.lua         # Client initialization
 │   │   │   └── 02_PI_Options.lua        # Reads SandboxVars
@@ -119,9 +119,9 @@ function PI.Utils.getSpawnMultiplier(itemType)
 end
 ```
 
-**3. Translation File** (`shared/Translate/EN/IG_UI_EN.txt`):
+**3. Translation File** (`shared/Translate/EN/Sandbox_EN.txt`):
 ```lua
-IGUI_EN = {
+Sandbox_EN = {
     -- Page name
     Sandbox_PI = "Perfection's Items",
     
@@ -139,6 +139,9 @@ IGUI_EN = {
     Sandbox_PI_RarityValues_option4 = "Common",
 }
 ```
+
+**File Location and Table Name Source**: [Albion's Guide - Translation Section](https://github.com/demiurgeQuantified/PZModdingGuides/blob/main/guides/SandboxOptions.md#translation)
+> "These strings point to translation strings in `lua/shared/Translate/EN/Sandbox_EN.txt` (for other languages, just swap EN for your language code). The file should be formatted as such: `Sandbox_EN = { ... }`"
 
 **Translation Pattern Source**: [Albion's Guide - Enum Translation](https://github.com/demiurgeQuantified/PZModdingGuides/blob/main/guides/SandboxOptions.md#enum-values)
 > "To name the options in an enum option, you must add to your option script: `valueTranslation = MyMod_OptionName_Values,`"

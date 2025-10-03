@@ -1,8 +1,8 @@
--- Perfection's Items - English UI Translations
+-- Perfection's Items - English Sandbox Translations
 -- Translation strings for Sandbox Options interface
--- Reference: Build 41 Sandbox Options translation pattern
+-- Reference: Albion's Sandbox Options Guide (Build 41)
 
-IGUI_EN = {
+Sandbox_EN = {
     -- Sandbox Page Name
     Sandbox_PI = "Perfection's Items",
     
