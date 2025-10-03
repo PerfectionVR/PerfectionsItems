@@ -92,6 +92,19 @@ function PI.Utils.isItemEnabled(itemType)
     return multiplier > 0
 end
 
+-- Calculate spawn probability estimate for logging
+-- Parameters:
+--   baseChance: base spawn weight from distribution (e.g., 1.0, 0.7)
+--   multiplier: spawn multiplier from sandbox settings (e.g., 0.1, 0.5)
+-- Returns: estimated containers needed (e.g., 1000, 1429)
+-- Formula: 1 ÷ (base_chance × multiplier) × 100 = containers needed
+function PI.Utils.calculateSpawnEstimate(baseChance, multiplier)
+    if multiplier <= 0 then
+        return 0  -- Never spawns
+    end
+    return math.floor(1 / (baseChance * multiplier) * 100)
+end
+
 -- Make the namespace globally accessible
 _G.PI = PI
 

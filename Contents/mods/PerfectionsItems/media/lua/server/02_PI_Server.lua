@@ -9,6 +9,10 @@
 -- Note: OnPreDistributionMerge and OnPostDistributionMerge also exist, but OnDistributionMerge
 --       is the standard/recommended event for adding items to distributions
 
+-- ============================================================================
+-- DISTRIBUTION MERGE LOGIC
+-- ============================================================================
+
 local function applyDistributions()
     PI.Utils.debugPrint("Starting distribution merge...")
     
@@ -63,7 +67,63 @@ local function applyDistributions()
     PI.Utils.debugPrint("Distribution merge complete: " .. tostring(addedCount) .. " added, " .. tostring(skippedCount) .. " skipped")
 end
 
+-- ============================================================================
+-- SPAWN PROBABILITY LOGGING
+-- ============================================================================
+
+-- Helper function to find the best (highest chance) container for an item type
+local function getBestContainer(itemType)
+    local distributions = PI.Distributions.data[itemType]
+    if not distributions or #distributions == 0 then
+        return nil, 0, "unknown"
+    end
+    
+    -- Find the distribution entry with the highest base chance
+    local bestDist = distributions[1]
+    for _, dist in ipairs(distributions) do
+        if dist.chance > bestDist.chance then
+            bestDist = dist
+        end
+    end
+    
+    return bestDist.chance, bestDist.container
+end
+
+-- Helper function to log individual item spawn estimate
+local function logItemEstimate(itemType)
+    local baseChance, containerName = getBestContainer(itemType)
+    if not baseChance then
+        PI.Utils.debugPrint("  " .. itemType .. ": No distributions defined")
+        return
+    end
+    
+    local multiplier = PI.Utils.getSpawnMultiplier(itemType)
+    local estimate = PI.Utils.calculateSpawnEstimate(baseChance, multiplier)
+    local estimateText = estimate > 0 and " (~1 in " .. estimate .. " " .. containerName .. ")" or " (never spawns)"
+    PI.Utils.debugPrint("  " .. itemType .. ": " .. tostring(multiplier) .. "x" .. estimateText)
+end
+
+local function logSpawnEstimates()
+    PI.Utils.debugPrint("Loot spawn estimates (best-case containers):")
+    
+    -- Log each item type (automatically uses their best container from distributions)
+    logItemEstimate("WoodenSword")
+    logItemEstimate("Bokuto")
+    logItemEstimate("Manual")
+end
+
+-- ============================================================================
+-- EVENT HANDLER
+-- ============================================================================
+
+-- Main handler for OnDistributionMerge event
+-- Calls both distribution application and logging
+local function onDistributionMerge()
+    applyDistributions()
+    logSpawnEstimates()
+end
+
 -- Register distribution merge event
-Events.OnDistributionMerge.Add(applyDistributions)
+Events.OnDistributionMerge.Add(onDistributionMerge)
 
 PI.Utils.debugPrint("Server distribution module loaded")
