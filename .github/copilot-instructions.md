@@ -13,13 +13,11 @@ Contents/mods/PerfectionsItems/
 │   ├── sandbox-options.txt              # Sandbox Options definitions
 │   ├── lua/
 │   │   ├── shared/
-│   │   │   ├── 01_PI_Utils.lua          # Loaded first (shared context)
+│   │   │   ├── 01_PI_Utils.lua          # Shared utilities (loaded first)
 │   │   │   └── Translate/EN/Sandbox_EN.txt # Sandbox option translations
-│   │   ├── client/
-│   │   │   └── 01_PI_Client.lua         # Client event handlers & recipe control
 │   │   └── server/
-│   │       ├── 01_PI_Distributions.lua  # Spawn data
-│   │       └── 02_PI_Server.lua         # Spawn logic
+│   │       ├── 01_PI_Distributions.lua  # Spawn data (loads first)
+│   │       └── 02_PI_Server.lua         # Spawn logic (loads second)
 │   └── scripts/
 │       ├── PIitems.txt                  # Item definitions (PI prefix avoids conflicts)
 │       └── PIrecipes.txt                # Recipe definitions (PI prefix avoids conflicts)
@@ -45,7 +43,6 @@ Contents/mods/PerfectionsItems/
 
 **Best practice**: Prefix Lua files with numbers to control load order:
 - `01_PI_Utils.lua` - Shared utilities (loads first in shared/)
-- `01_PI_Client.lua` - Client event handlers and recipe control
 - `01_PI_Distributions.lua` - Spawn data (loads first in server/)
 - `02_PI_Server.lua` - Spawn logic, depends on distributions (loads second)
 
@@ -97,33 +94,11 @@ option PI.WoodenSwordRarity
 - `valueTranslation = PI_RarityValues` - Translation key prefix for dropdown values
 
 **2. Read Options** (`shared/01_PI_Utils.lua`):
-```lua
--- Map dropdown indices to spawn multipliers
-local RARITY_MULTIPLIERS = {
-    [1] = 0.0,  -- Off
-    [2] = 0.1,  -- Extremely Rare (DEFAULT)
-    [3] = 0.5,  -- Rare
-    [4] = 1.0,  -- Common
-}
-
--- Read from SandboxVars (available in both client and server contexts)
-function PI.Utils.getOptions()
-    if SandboxVars and SandboxVars.PI then
-        return {
-            WoodenSwordRarity = SandboxVars.PI.WoodenSwordRarity or 2,
-        }
-    else
-        return { WoodenSwordRarity = 2 }  -- Fallback
-    end
-end
-
--- Helper to get actual multiplier from index
-function PI.Utils.getSpawnMultiplier(itemType)
-    local options = PI.Utils.getOptions()
-    local index = options[itemType .. "Rarity"]
-    return RARITY_MULTIPLIERS[index] or 0.1
-end
-```
+See `01_PI_Utils.lua` for implementation details. Key functions:
+- `PI.Utils.getOptions()` - Reads SandboxVars.PI settings with fallback defaults
+- `PI.Utils.getSpawnMultiplier(itemType)` - Returns multiplier based on rarity index
+- `PI.Utils.isItemEnabled(itemType)` - Boolean check if item is enabled
+- `PI.Utils.calculateSpawnEstimate(baseChance, multiplier)` - Calculates spawn probability
 
 **3. Translation File** (`shared/Translate/EN/Sandbox_EN.txt`):
 ```lua
@@ -139,8 +114,8 @@ Sandbox_EN = {
     
     -- Dropdown values (using valueTranslation pattern)
     -- Pattern: Sandbox_<valueTranslation>_option<number>
-    Sandbox_PI_RarityValues_option1 = "Off",
-    Sandbox_PI_RarityValues_option2 = "Extremely Rare",
+    Sandbox_PI_RarityValues_option1 = "Disabled",
+    Sandbox_PI_RarityValues_option2 = "Very Rare",
     Sandbox_PI_RarityValues_option3 = "Rare",
     Sandbox_PI_RarityValues_option4 = "Common",
 }
@@ -177,51 +152,17 @@ Sandbox_EN = {
 **Implementation Pattern**:
 
 **1. Distribution Data** (`server/01_PI_Distributions.lua`):
-```lua
--- Define spawn locations and base chances for each item
-PI.Distributions.data = {
-    WoodenSword = {
-        -- Format: {container = "ContainerName", item = "Module.ItemName", chance = baseWeight}
-        {container = "CrateCarpentry", item = "PerfectionsItems.WoodenSword", chance = 1.0},
-        {container = "ToolStoreTools", item = "PerfectionsItems.WoodenSword", chance = 0.5},
-        -- ... more distributions
-    },
-    Bokuto = {
-        {container = "CrateCarpentry", item = "PerfectionsItems.Bokuto", chance = 0.6},
-        -- ... more distributions
-    },
-    Manual = {
-        {container = "BookstoreBooks", item = "PerfectionsItems.BokutoMagazine", chance = 0.8},
-        -- ... more distributions
-    },
-}
-```
+See `01_PI_Distributions.lua` for complete distribution table with inline documentation. The file contains:
+- Distribution data for all item types (WoodenSword, Bokuto, Manual)
+- Comprehensive inline documentation on multipliers and container selection strategy
+- Format: `{container = "ContainerName", item = "Module.ItemName", chance = baseWeight}`
 
 **2. Distribution Merge Logic** (`server/02_PI_Server.lua`):
-```lua
--- Build 41 API: Use table.insert() to add items to ProceduralDistributions.list
-local function applyDistributions()
-    local distributionList = ProceduralDistributions.list
-    
-    for itemType, distributions in pairs(PI.Distributions.data) do
-        if PI.Utils.isItemEnabled(itemType) then
-            local multiplier = PI.Utils.getSpawnMultiplier(itemType)
-            
-            for _, dist in ipairs(distributions) do
-                local container = distributionList[dist.container]
-                if container and container.items then
-                    -- Build 41 API pattern from oldid=405935
-                    table.insert(container.items, dist.item)        -- Insert item name
-                    table.insert(container.items, dist.chance * multiplier)  -- Insert spawn weight
-                end
-            end
-        end
-    end
-end
-
--- Register with OnDistributionMerge event
-Events.OnDistributionMerge.Add(applyDistributions)
-```
+See `02_PI_Server.lua` for implementation. The file contains:
+- `applyDistributions()` - Merges items into ProceduralDistributions.list using Build 41 API
+- `logSpawnEstimates()` - Logs spawn probability estimates for debugging
+- `onDistributionMerge()` - Event handler that calls both functions
+- Helper functions: `getBestContainer()`, `logItemEstimate()`
 
 **Build 41 API Pattern** (from [oldid=405935](https://pzwiki.net/w/index.php?oldid=405935)):
 ```lua
@@ -272,16 +213,13 @@ Build 41 provides 400+ container types. Common thematic choices:
 ```lua
 -- shared/01_PI_Utils.lua (available everywhere)
 function PI.Utils.getOptions()
-    if SandboxVars and SandboxVars.PerfectionsItems then
+    if SandboxVars and SandboxVars.PI then
         return {
-            WoodenSwordRarity = SandboxVars.PerfectionsItems.WoodenSwordRarity or 2,
+            WoodenSwordRarity = SandboxVars.PI.WoodenSwordRarity or 2,
         }
     end
     return { WoodenSwordRarity = 2 }  -- Fallback defaults
 end
-
--- client/SomeFile.lua
-local options = PI.Utils.getOptions()  -- Works!
 
 -- server/SomeFile.lua  
 local options = PI.Utils.getOptions()  -- Works!
