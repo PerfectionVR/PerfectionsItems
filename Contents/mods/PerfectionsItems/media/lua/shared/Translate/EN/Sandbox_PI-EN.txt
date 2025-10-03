@@ -2,7 +2,7 @@
 -- Translation strings for Sandbox Options interface
 -- Reference: Albion's Sandbox Options Guide (Build 41)
 
-Sandbox_EN = {
+Sandbox_PI_EN = {
     -- Sandbox Page Name
     Sandbox_PI = "Perfection's Items",
     
@@ -12,9 +12,9 @@ Sandbox_EN = {
     Sandbox_PI_ManualRarity = "Crafting Manual",
     
     -- Option Tooltips
-    Sandbox_PI_WoodenSwordRarity_tooltip = "Controls spawn rate for Wooden Sword items and recipes.",
-    Sandbox_PI_BokutoRarity_tooltip = "Controls spawn rate for Bokuto items and recipes (requires Woodwork 8).",
-    Sandbox_PI_ManualRarity_tooltip = "Controls spawn rate for the Bokuto crafting manual. Note: Manual spawns at half the rate of items.",
+    Sandbox_PI_WoodenSwordRarity_tooltip = "Controls spawn rate for Wooden Sword items and recipes. Applied when containers are first opened/loaded. Changing settings mid-game only affects unopened containers.",
+    Sandbox_PI_BokutoRarity_tooltip = "Controls spawn rate for Bokuto items and recipes (requires Woodwork 8). Applied when containers are first opened/loaded. Changing settings mid-game only affects unopened containers.",
+    Sandbox_PI_ManualRarity_tooltip = "Controls spawn rate for the Bokuto crafting manual (spawns at half the rate of items). Applied when containers are first opened/loaded. Changing settings mid-game only affects unopened containers.",
     
     -- Shared Dropdown Values showing spawn percentages (using valueTranslation pattern)
     -- Percentages shown are relative to base spawn chances defined in distributions
