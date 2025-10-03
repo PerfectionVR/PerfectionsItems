@@ -11,19 +11,21 @@ function PI.Utils.debugPrint(msg)
 end
 
 -- Rarity index to multiplier conversion table (for items)
+-- UI shows percentages to admins, we handle the math internally
+-- Index maps: 1=Disabled(0%), 2=Very Rare(10%), 3=Rare(50%), 4=Common(100%)
 local RARITY_MULTIPLIERS = {
-    [1] = 0.0,   -- Off
-    [2] = 0.1,   -- Extremely Rare (DEFAULT)
-    [3] = 0.5,   -- Rare
-    [4] = 1.0,   -- Common
+    [1] = 0.0,   -- Disabled (0% of base chance)
+    [2] = 0.1,   -- Very Rare (10% of base chance) [DEFAULT]
+    [3] = 0.5,   -- Rare (50% of base chance)
+    [4] = 1.0,   -- Common (100% of base chance)
 }
 
--- Manual spawn rates (even rarer than items since it's the key to recipes)
+-- Manual spawn rates (half the item rate since manuals are teaching items)
 local MANUAL_MULTIPLIERS = {
-    [1] = 0.0,    -- Off
-    [2] = 0.05,   -- Extremely Rare (half the item rate, DEFAULT)
-    [3] = 0.25,   -- Rare (half the item rate)
-    [4] = 0.5,    -- Common (half the item rate)
+    [1] = 0.0,    -- Disabled (0%)
+    [2] = 0.05,   -- Very Rare (5% of base chance) [DEFAULT]
+    [3] = 0.25,   -- Rare (25% of base chance)
+    [4] = 0.5,    -- Common (50% of base chance)
 }
 
 -- Get options from SandboxVars (server-configured, per-world settings)

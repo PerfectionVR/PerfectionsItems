@@ -16,14 +16,13 @@ Contents/mods/PerfectionsItems/
 │   │   │   ├── 01_PI_Utils.lua          # Loaded first (shared context)
 │   │   │   └── Translate/EN/Sandbox_EN.txt # Sandbox option translations
 │   │   ├── client/
-│   │   │   ├── 01_PI_Client.lua         # Client initialization
-│   │   │   └── 02_PI_Options.lua        # Reads SandboxVars
+│   │   │   └── 01_PI_Client.lua         # Client event handlers & recipe control
 │   │   └── server/
 │   │       ├── 01_PI_Distributions.lua  # Spawn data
 │   │       └── 02_PI_Server.lua         # Spawn logic
 │   └── scripts/
-│       ├── PI_items.txt                 # Item definitions (PI_ prefix avoids conflicts)
-│       └── PI_recipes.txt               # Recipe definitions (PI_ prefix avoids conflicts)
+│       ├── PIitems.txt                  # Item definitions (PI prefix avoids conflicts)
+│       └── PIrecipes.txt                # Recipe definitions (PI prefix avoids conflicts)
 ```
 
 **Reference**: [PZ Modding Wiki](https://pzwiki.net/wiki/Modding) | [Mod Structure](https://pzwiki.net/wiki/Mod_structure)
@@ -46,8 +45,7 @@ Contents/mods/PerfectionsItems/
 
 **Best practice**: Prefix Lua files with numbers to control load order:
 - `01_PI_Utils.lua` - Shared utilities (loads first in shared/)
-- `01_PI_Client.lua` - Client initialization (loads first in client/)
-- `02_PI_Options.lua` - Depends on client context (loads second)
+- `01_PI_Client.lua` - Client event handlers and recipe control
 - `01_PI_Distributions.lua` - Spawn data (loads first in server/)
 - `02_PI_Server.lua` - Spawn logic, depends on distributions (loads second)
 
@@ -58,6 +56,14 @@ Contents/mods/PerfectionsItems/
 ### Sandbox Options Integration (Build 41)
 
 **Framework**: Sandbox Options is Project Zomboid's built-in configuration system for server mechanics. Options appear in **New Game → Sandbox Options** before world creation.
+
+**CRITICAL: Admin/Server-Only Settings**:
+- ✅ Set by **server admin** or **world creator** during world creation
+- ✅ Stored **per-world** in server configuration
+- ✅ **Cannot be changed by regular players** during gameplay
+- ✅ Require **admin privileges** or **world recreation** to modify
+- ⚠️ **NOT client-side "Mod Options"** (like ModOptions menu mods)
+- ✅ **Multiplayer friendly**: Same settings apply to all players on server
 
 **Documentation**: 
 - [Sandbox Options Guide by Albion](https://github.com/demiurgeQuantified/PZModdingGuides/blob/main/guides/SandboxOptions.md) - Comprehensive Build 41-compatible guide
@@ -159,6 +165,107 @@ Sandbox_EN = {
 5. **Multiplayer friendly**: Works on dedicated servers, visible to all players
 
 **Why this is better for loot mods**: Loot distributions are server-side mechanics that affect all players. Sandbox Options are the standard PZ way to configure server mechanics.
+
+### Procedural Loot Distribution (Build 41)
+
+**Framework**: Procedural Distributions is Project Zomboid's system for spawning items in containers. Mods add items to distribution tables during server startup.
+
+**Documentation**:
+- [Procedural Distributions (Build 41 archived)](https://pzwiki.net/w/index.php?oldid=405935) - Official Build 41 API documentation
+- [Lua Events - OnDistributionMerge (Build 41 archived)](https://pzwiki.net/w/index.php?oldid=767129) - Event timing reference
+
+**Implementation Pattern**:
+
+**1. Distribution Data** (`server/01_PI_Distributions.lua`):
+```lua
+-- Define spawn locations and base chances for each item
+PI.Distributions.data = {
+    WoodenSword = {
+        -- Format: {container = "ContainerName", item = "Module.ItemName", chance = baseWeight}
+        {container = "CrateCarpentry", item = "PerfectionsItems.WoodenSword", chance = 1.0},
+        {container = "ToolStoreTools", item = "PerfectionsItems.WoodenSword", chance = 0.5},
+        -- ... more distributions
+    },
+    Bokuto = {
+        {container = "CrateCarpentry", item = "PerfectionsItems.Bokuto", chance = 0.6},
+        -- ... more distributions
+    },
+    Manual = {
+        {container = "BookstoreBooks", item = "PerfectionsItems.BokutoMagazine", chance = 0.8},
+        -- ... more distributions
+    },
+}
+```
+
+**2. Distribution Merge Logic** (`server/02_PI_Server.lua`):
+```lua
+-- Build 41 API: Use table.insert() to add items to ProceduralDistributions.list
+local function applyDistributions()
+    local distributionList = ProceduralDistributions.list
+    
+    for itemType, distributions in pairs(PI.Distributions.data) do
+        if PI.Utils.isItemEnabled(itemType) then
+            local multiplier = PI.Utils.getSpawnMultiplier(itemType)
+            
+            for _, dist in ipairs(distributions) do
+                local container = distributionList[dist.container]
+                if container and container.items then
+                    -- Build 41 API pattern from oldid=405935
+                    table.insert(container.items, dist.item)        -- Insert item name
+                    table.insert(container.items, dist.chance * multiplier)  -- Insert spawn weight
+                end
+            end
+        end
+    end
+end
+
+-- Register with OnDistributionMerge event
+Events.OnDistributionMerge.Add(applyDistributions)
+```
+
+**Build 41 API Pattern** (from [oldid=405935](https://pzwiki.net/w/index.php?oldid=405935)):
+```lua
+-- Documented Build 41 approach:
+table.insert(ProceduralDistributions.list["ContainerName"].items, "Module.ItemName");
+table.insert(ProceduralDistributions.list["ContainerName"].items, 0.5);  -- Spawn weight
+```
+
+**Key Points**:
+1. **Event timing**: Use `OnDistributionMerge` (fires when distribution tables merge)
+   - Alternative events exist: `OnPreDistributionMerge`, `OnPostDistributionMerge`
+   - `OnDistributionMerge` is the standard/recommended event for adding items
+2. **Two inserts required**: First insert item name (string), second insert spawn weight (number)
+3. **Spawn weight**: Higher = more common. Actual spawn chance = weight / sum of all weights in container
+4. **Server-side only**: Distributions only exist on server, never client
+5. **Container validation**: Always check if container exists before inserting
+6. **Sandbox integration**: Multiply base chances by sandbox option multipliers
+
+**Container Selection** (from [oldid=405935](https://pzwiki.net/w/index.php?oldid=405935)):
+
+Build 41 provides 400+ container types. Common thematic choices:
+
+| Item Type | Suitable Containers | Rationale |
+|-----------|-------------------|-----------|
+| **Crafted weapons** | `CrateCarpentry`, `CrateTools`, `ToolStoreTools`, `GarageTools`, `ShedTools` | Tool/crafting theme |
+| **Higher quality items** | Same as crafted but **lower weights** | Represents rarity/skill |
+| **Crafting manuals** | `BookstoreBooks`, `LibraryBooks`, `CrateMagazines`, `PostOfficeBoxes`, `DeskGeneric` | Literature/education theme |
+| **Residential items** | `BedroomDresser`, `ClosetShelfGeneric`, `ShelfGeneric` | Home storage |
+| **Storage units** | `StorageUnitTools`, `CrateRandomJunk` | Mixed storage |
+
+**Full container list**: See [Procedural Distributions - List of distributions](https://pzwiki.net/w/index.php?oldid=405935#List_of_distributions)
+
+**Behavior Notes**:
+- **Loot generation timing**: Containers generate loot when **first opened/loaded**, not at world creation
+- **Changing settings mid-game**: Only affects **un-opened containers**
+- **Already-generated loot**: Persists even if settings changed (normal Build 41 behavior)
+- **Multiplier = 0.0**: Container entries skipped entirely (item won't spawn)
+
+**Why this pattern**:
+- ✅ Follows official Build 41 documentation
+- ✅ Separates data (`01_PI_Distributions.lua`) from logic (`02_PI_Server.lua`)
+- ✅ Easy to add/remove containers without touching merge logic
+- ✅ Integrates with Sandbox Options for player control
+- ✅ Validates containers to prevent errors with missing containers
 
 ### Cross-Environment Lua Communication
 **Pattern**: SandboxVars accessible in shared utilities, works in both client and server contexts.
@@ -292,12 +399,13 @@ java.security.InvalidParameterException: Error: ConditionMax = 16.5 is not a val
 
 Build 41 Documentation Links (use these directly):
 - [PZ Modding Wiki](https://pzwiki.net/wiki/Modding) - Official documentation
-- [Lua Events](https://pzwiki.net/wiki/Lua_event) - Complete event list
+- [Lua Events (Build 41 archived)](https://pzwiki.net/w/index.php?oldid=767129) - Complete event list
 - [Item Properties](https://pzwiki.net/wiki/Item_(scripts)) - Full item property reference
 - [Recipe Scripts](https://pzwiki.net/wiki/Recipe_(scripts)) - Recipe syntax reference
-- [Procedural Distributions](https://pzwiki.net/wiki/Procedural_distributions) - Loot spawn system
+- [Procedural Distributions (Build 41 archived)](https://pzwiki.net/w/index.php?oldid=405935) - Loot spawn system
 - [Community Discord](https://discord.gg/theindiestone) - Workshop support channel
 
 Build 41 Community Guides (highly recommended):
 - [Albion's PZ Modding Guides](https://github.com/demiurgeQuantified/PZModdingGuides/tree/main/guides) - Comprehensive Build 41-compatible guides
   - [Sandbox Options Guide](https://github.com/demiurgeQuantified/PZModdingGuides/blob/main/guides/SandboxOptions.md) - Complete sandbox options reference
+  - [PZEventDoc - Events.md](https://github.com/demiurgeQuantified/PZEventDoc/blob/develop/docs/Events.md) - Complete Build 41 event parameter reference (more detailed than PZwiki)

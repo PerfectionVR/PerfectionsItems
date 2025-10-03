@@ -15,7 +15,7 @@ description=Craftable wooden weapons for early game survival. Balanced gameplay 
 [*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2169435993]Mod Options[/url]
 [/list]
 
-Configure in Options > Mod Options. All items prefixed [b][PI][/b] for easy sorting.
+Configure in Sandbox Options.
 
 tags=Build 41;Weapons;Realistic
 visibility=public

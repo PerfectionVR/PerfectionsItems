@@ -12,13 +12,14 @@ Sandbox_EN = {
     Sandbox_PI_ManualRarity = "Crafting Manual",
     
     -- Option Tooltips
-    Sandbox_PI_WoodenSwordRarity_tooltip = "Controls availability of Wooden Sword item and recipe. Off = disabled, Extremely Rare = 0.1x spawn, Rare = 0.5x spawn, Common = 1.0x spawn.",
-    Sandbox_PI_BokutoRarity_tooltip = "Controls availability of Bokuto item and recipe (requires Woodwork 8). Off = disabled, Extremely Rare = 0.1x spawn, Rare = 0.5x spawn, Common = 1.0x spawn.",
-    Sandbox_PI_ManualRarity_tooltip = "Controls spawn rate of Wooden Sword Crafting Manual (required to learn recipes). Spawns at HALF the rate of items. Off = disabled, Extremely Rare = 0.05x spawn, Rare = 0.25x spawn, Common = 0.5x spawn.",
+    Sandbox_PI_WoodenSwordRarity_tooltip = "Controls spawn rate for Wooden Sword items and recipes.",
+    Sandbox_PI_BokutoRarity_tooltip = "Controls spawn rate for Bokuto items and recipes (requires Woodwork 8).",
+    Sandbox_PI_ManualRarity_tooltip = "Controls spawn rate for the Bokuto crafting manual. Note: Manual spawns at half the rate of items.",
     
-    -- Shared Dropdown Values (using valueTranslation pattern)
-    Sandbox_PI_RarityValues_option1 = "Off",
-    Sandbox_PI_RarityValues_option2 = "Extremely Rare",
-    Sandbox_PI_RarityValues_option3 = "Rare",
-    Sandbox_PI_RarityValues_option4 = "Common",
+    -- Shared Dropdown Values showing spawn percentages (using valueTranslation pattern)
+    -- Percentages shown are relative to base spawn chances defined in distributions
+    Sandbox_PI_RarityValues_option1 = "Disabled (0%)",
+    Sandbox_PI_RarityValues_option2 = "Very Rare (10%)",
+    Sandbox_PI_RarityValues_option3 = "Rare (50%)",
+    Sandbox_PI_RarityValues_option4 = "Common (100%)",
 }
