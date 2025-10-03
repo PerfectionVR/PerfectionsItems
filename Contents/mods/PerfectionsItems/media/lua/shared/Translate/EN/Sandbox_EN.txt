@@ -1,6 +1,10 @@
 -- Perfection's Items - English Sandbox Translations
 -- Translation strings for Sandbox Options interface
 -- Reference: Albion's Sandbox Options Guide (Build 41)
+--
+-- NOTE: Filename MUST be Sandbox_EN.txt and table MUST be Sandbox_EN
+-- This is required by the Build 41 sandbox options system
+-- The "overrides" warning in logs is NORMAL and unavoidable
 
 Sandbox_EN = {
     -- Sandbox Page Name
@@ -12,13 +16,14 @@ Sandbox_EN = {
     Sandbox_PI_ManualRarity = "Crafting Manual",
     
     -- Option Tooltips
-    Sandbox_PI_WoodenSwordRarity_tooltip = "Controls availability of Wooden Sword item and recipe. Off = disabled, Extremely Rare = 0.1x spawn, Rare = 0.5x spawn, Common = 1.0x spawn.",
-    Sandbox_PI_BokutoRarity_tooltip = "Controls availability of Bokuto item and recipe (requires Woodwork 8). Off = disabled, Extremely Rare = 0.1x spawn, Rare = 0.5x spawn, Common = 1.0x spawn.",
-    Sandbox_PI_ManualRarity_tooltip = "Controls spawn rate of Wooden Sword Crafting Manual (required to learn recipes). Spawns at HALF the rate of items. Off = disabled, Extremely Rare = 0.05x spawn, Rare = 0.25x spawn, Common = 0.5x spawn.",
+    Sandbox_PI_WoodenSwordRarity_tooltip = "Controls spawn rate for Wooden Sword items and recipes. Applied when containers are first opened/loaded. Changing settings mid-game only affects unopened containers.",
+    Sandbox_PI_BokutoRarity_tooltip = "Controls spawn rate for Bokuto items and recipes (requires Woodwork 8). Applied when containers are first opened/loaded. Changing settings mid-game only affects unopened containers.",
+    Sandbox_PI_ManualRarity_tooltip = "Controls spawn rate for the Bokuto crafting manual (spawns at half the rate of items). Applied when containers are first opened/loaded. Changing settings mid-game only affects unopened containers.",
     
     -- Shared Dropdown Values (using valueTranslation pattern)
-    Sandbox_PI_RarityValues_option1 = "Off",
-    Sandbox_PI_RarityValues_option2 = "Extremely Rare",
+    -- Labels describe relative spawn frequency, not exact percentages
+    Sandbox_PI_RarityValues_option1 = "Disabled",
+    Sandbox_PI_RarityValues_option2 = "Very Rare",
     Sandbox_PI_RarityValues_option3 = "Rare",
     Sandbox_PI_RarityValues_option4 = "Common",
 }
