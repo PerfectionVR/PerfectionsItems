@@ -1,48 +1,6 @@
 version=1
+id=3579520419
 title=Perfection's Items
 description=Craftable wooden weapons for early game survival. A novelty mod that adds craftable alternatives to baseball bats with custom recipes and spawn control.
-
-[h1]Items[/h1]
-[list]
-[*] [b]Wooden Sword[/b] - Basic melee weapon (Carpentry 4, 5 XP)
-  - Uses baseball bat stats (damage, durability, swing speed)
-  - Requires: 2 planks, 2 twine, hammer, saw
-[*] [b]Bokuto[/b] - Superior practice sword (Carpentry 8, 15 XP)
-  - Slightly better than baseball bat stats
-  - Requires: 3 planks, 2 nails, 1 small sheet metal, 2 twine, hammer, saw
-  - Japanese martial arts training weapon
-[*] [b]Crafting Manual[/b] - Recipe book for Bokuto
-  - Find in bookstores, libraries, post offices
-  - Teaches the advanced Bokuto crafting recipe
-[/list]
-
-[b]Note:[/b] This is primarily a novelty/roleplay mod. Both weapons use baseball bat models and sounds with custom crafting recipes.
-
-[h1]Spawn Locations[/h1]
-Items spawn in thematically appropriate containers:
-[list]
-[*] [b]Weapons[/b]: Tool stores, carpentry crates, garages, workshops, gyms (Bokuto)
-[*] [b]Manual[/b]: Bookstores, libraries, classrooms, post offices, tool stores
-[*] [b]40 total containers[/b] across 3 item types for varied discovery
-[/list]
-
-[h1]Configuration[/h1]
-Configure spawn rates in [b]New Game → Sandbox Options → Perfection's Items[/b]
-
-[b]Four spawn rate settings:[/b]
-[list]
-[*] [b]Disabled[/b] - Items never spawn
-[*] [b]Very Rare[/b] - Default setting, very challenging to find
-[*] [b]Rare[/b] - Moderate spawn rate
-[*] [b]Common[/b] - Frequent spawns
-[/list]
-
-Settings apply when containers are first opened. Separate controls for each item type (Wooden Sword, Bokuto, Manual).
-
-[h1]Links[/h1]
-[list]
-[*] [url=https://github.com/PerfectionVR/PerfectionsItems]GitHub Repository[/url] - Source code, bug reports, feature requests
-[/list]
-
-tags=Build 41;Weapons;Realistic
+tags=Build 41;Items;Realistic;Weapons
 visibility=public
